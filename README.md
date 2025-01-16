@@ -27,6 +27,8 @@ Solution:
     Bug Fix:
         Updated the code to retrieve data from the correct table.
         Used the pluck method in Laravel to fetch specific columns, improving query efficiency and performance.
+        Used the join method to take data from both the table.
+        
 
     Outcome:
         The bug was resolved, and the dashboard now displays accurate data.
