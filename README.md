@@ -68,12 +68,18 @@ Problem Statement:
 The application displayed incorrect data due to discrepancies in the database. The root cause was identified as fetching data from incorrect database tables, which led to inaccurate and inconsistent results, and the wrong format of code was being used.
 
 Solution Overview:
+
 1. Database Analysis:
 Data may not be properly escaped or delimited, leading to broken CSV formatting.
+
 Use Laravel built-in support for handling CSVs via the Maatwebsite\Excel package.
+
 Ensure that fields with special characters like commas or newlines are properly enclosed in quotes.
+
 The PDF output may not be formatted correctly due to the incorrect use of libraries or styles.
+
 Using libraries like dompdf or barryvdh/laravel-dompdf, ensure the CSS is well-defined and check the documentation for layout and formatting.
+
 Set the encoding to UTF-8, e.g., $file = fopen('php://output', 'w'); and use MBstring to ensure encoding compatibility.
 
 Validation of Data Sources: Verified if the tables used in the queries were correct by cross-referencing the data with the requirements.
