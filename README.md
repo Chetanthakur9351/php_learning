@@ -61,7 +61,7 @@ Practical Experience: Serves as a tangible example of my ability to work on prof
 
 ------------------------------------------------------------------------------------------------------------------------------------
 
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Day - 2 : PDF and CSV Bugs Fixes >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+<<<<<<<<<<<<<<<< Day - 2 : PDF and CSV Bugs Fixes >>>>>>>>>>>>>>>>>>>>>
 
 Data Validation and Issue Resolution
 Problem Statement:
@@ -76,8 +76,10 @@ Cross-Table Verification: Ensured that related data spread across multiple table
 Correct Table Selection: Updated the queries to fetch data from the correct tables.
 
 SQL Debugging: Ran SQL queries manually in the database to verify data integrity and identify issues.
-
----------SELECT * FROM correct_table WHERE conditions;----------
+        
+        ----------
+        SELECT * FROM correct_table WHERE conditions;
+        ----------
 
 
 Data Cross-Verification: Checked data consistency using joins and manual verification.
@@ -94,8 +96,10 @@ Improved Query Efficiency: Refined SQL queries to optimize performance and ensur
 3. Automated Data Validation:
 Integrated Laravel methods like pluck and chunkById to manage large datasets effectively and validate data across tables programmatically.
 Used conditional checks to identify discrepancies dynamically:
-
-$data = DB::table('correct_table')->where('status', 'Active')->get();
+        
+        -------------------------------------------------
+        $data = DB::table('correct_table')->where('status', 'Active')->get();
+        ----------------------------------------------------
 
 
 Outcome:
