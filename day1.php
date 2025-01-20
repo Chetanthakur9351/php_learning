@@ -1,94 +1,66 @@
 
 <!-- ---------------------------------  Dummy Code---------------------------------------- -->
 
-
 <?php
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class ReportController extends Controller
 {
     public function academicReportStatistics(Request $request)
     {
         try {
-            // Simulated list of program IDs
-            $programs = [1, 2, 3, 4, 5];
-            
-            // Simulated enrollment data
-            $enrollments = collect([
+            // Simulated user data for demonstration
+            $user = collect([
                 ['enrollment_id' => 1, 'status' => true, 'student_type' => 'New', 'programme_status' => 'Active'],
                 ['enrollment_id' => 2, 'status' => true, 'student_type' => 'Returning', 'programme_status' => 'Transfer out'],
                 ['enrollment_id' => 3, 'status' => false, 'student_type' => 'New', 'programme_status' => 'Withdraw'],
             ]);
 
-            // Simulated semester registrations
-            $semesterRegistrations = collect([
-                1 => ['admission_status' => 'Full Time'],
-                2 => ['admission_status' => 'Part Time'],
+            // Updating user credits in chunks
+            DB::table('users')
+                ->where(function ($query) {
+                    $query->where('credits', 1)->orWhere('credits', 2);
+                })
+                ->chunkById(100, function (Collection $user) {
+                    foreach ($user as $item) {
+                        DB::table('users')
+                            ->where('id', $item->id)
+                            ->update(['credits' => 3]);
+                    }
+                });
+
+            // Simulated user semester registration data
+            $user = $user->merge([
+                ['enrollment_id' => 1, 'admission_status' => 'Full Time'],
+                ['enrollment_id' => 2, 'admission_status' => 'Part Time'],
             ]);
 
-            // Simulated final bill data
-            $studentFinalBills = collect([
-                1 => ['bill_paid' => true],
-                2 => ['bill_paid' => true],
+            // Simulated user billing data
+            $user = $user->merge([
+                ['enrollment_id' => 1, 'bill_paid' => true],
+                ['enrollment_id' => 2, 'bill_paid' => true],
             ]);
 
-            // Initialize statistics
+            // Statistics initialization
             $statistics = [
-                'enrolled_students_count' => 0,
-                'register_students_count' => 0,
-                'new_students_count' => 0,
-                'returning_students_count' => 0,
-                'transfer_in_count' => 0,
-                'transfer_out_count' => 0,
-                'withdraw_out_count' => 0,
-                'part_time_count' => 0,
-                'full_time_count' => 0,
-                'faculties_count' => 0,
-                'total_students' => 100, // Example total students count
+                'total_students_count' => $user->count(),
+                'registered_students_count' => $user->where('status', true)->count(),
+                'new_students_count' => $user->where('student_type', 'New')->count(),
+                'returning_students_count' => $user->where('student_type', 'Returning')->count(),
+                'transfer_in_count' => $user->where('programme_status', 'Transfer in')->count(),
+                'transfer_out_count' => $user->where('programme_status', 'Transfer out')->count(),
+                'withdrawn_students_count' => $user->where('programme_status', 'Withdraw')->count(),
+                'full_time_count' => $user->where('admission_status', 'Full Time')->count(),
+                'part_time_count' => $user->where('admission_status', 'Part Time')->count(),
+                'bill_paid_count' => $user->where('bill_paid', true)->count(),
             ];
 
-            // Process each enrollment
-            foreach ($enrollments as $enrollment) {
-                // Count enrolled students
-                if ($enrollment['status']) {
-                    $statistics['enrolled_students_count']++;
-                }
-
-                // Count registered students
-                if (isset($studentFinalBills[$enrollment['enrollment_id']])) {
-                    $statistics['register_students_count']++;
-                }
-
-                // Count based on student type
-                if ($enrollment['student_type'] == 'New') {
-                    $statistics['new_students_count']++;
-                } elseif ($enrollment['student_type'] == 'Returning') {
-                    $statistics['returning_students_count']++;
-                }
-
-                // Count transfer out and withdraw students
-                if ($enrollment['programme_status'] == 'Transfer out') {
-                    $statistics['transfer_out_count']++;
-                }
-                if ($enrollment['programme_status'] == 'Withdraw') {
-                    $statistics['withdraw_out_count']++;
-                }
-
-                // Count full-time/part-time students
-                if (isset($semesterRegistrations[$enrollment['enrollment_id']])) {
-                    $admissionStatus = $semesterRegistrations[$enrollment['enrollment_id']]['admission_status'];
-                    if ($admissionStatus == 'Full Time') {
-                        $statistics['full_time_count']++;
-                    } elseif ($admissionStatus == 'Part Time') {
-                        $statistics['part_time_count']++;
-                    }
-                }
-            }
-
-            // Return the dummy statistics
+            // Return statistics as JSON response
             return response()->json([
                 'status' => true,
                 'statistics' => $statistics,
